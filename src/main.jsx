@@ -1,9 +1,9 @@
-  import React from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 
 import { router } from "./routes/router";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/authContext";
 
 import "./index.css";
 

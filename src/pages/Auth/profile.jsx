@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-
-import { doc, getDoc } from "firebase/firestore";
-
-import { db } from "../../firebase/config";
-import { useAuth } from "../../context/AuthContext";
+import { useEffect, useState, useRef } from "react";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../../firebase/config";
+import { useAuth } from "../../context/authContext";
 
 function Profile() {
   const { currentUser } = useAuth();
@@ -11,13 +10,22 @@ function Profile() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // edit state
+  const [editing, setEditing] = useState(false);
+  const [editUsername, setEditUsername] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  const fileInputRef = useRef();
+
   useEffect(() => {
     async function fetchUser() {
       try {
         const userRef = doc(db, "users", currentUser.uid);
-
         const userSnap = await getDoc(userRef);
-
         if (userSnap.exists()) {
           setUserData(userSnap.data());
         }
@@ -28,30 +36,77 @@ function Profile() {
       }
     }
 
-    if (currentUser) {
-      fetchUser();
-    }
+    if (currentUser) fetchUser();
   }, [currentUser]);
+
+  function openEdit() {
+    setEditUsername(userData?.username ?? "");
+    setEditBio(userData?.bio ?? "");
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setSaveError("");
+    setEditing(true);
+  }
+
+  function handlePhotoChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  }
+
+  async function handleSave() {
+    if (!editUsername.trim()) {
+      setSaveError("Gebruikersnaam mag niet leeg zijn");
+      return;
+    }
+
+    setSaving(true);
+    setSaveError("");
+
+    try {
+      const updates = {
+        username: editUsername.trim(),
+        bio: editBio.trim(),
+      };
+
+      if (photoFile) {
+        const storageRef = ref(storage, `profilePictures/${currentUser.uid}`);
+        await uploadBytes(storageRef, photoFile);
+        updates.profilePicture = await getDownloadURL(storageRef);
+      }
+
+      await updateDoc(doc(db, "users", currentUser.uid), updates);
+
+      setUserData((prev) => ({ ...prev, ...updates }));
+      setEditing(false);
+    } catch (err) {
+      setSaveError("Opslaan mislukt, probeer opnieuw");
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        Loading profile...
+        Profiel laden...
       </div>
     );
   }
 
+  const avatarSrc = photoPreview ?? userData?.profilePicture;
+
   return (
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-4xl mx-auto">
-        {/* HEADER */}
         <div className="bg-zinc-900 rounded-2xl p-8 mb-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
-          {/* PROFILE IMAGE */}
-          <div className="w-32 h-32 rounded-full bg-zinc-800 overflow-hidden">
-            {userData?.profilePicture ? (
+          <div className="relative w-32 h-32 rounded-full bg-zinc-800 overflow-hidden flex-shrink-0">
+            {avatarSrc ? (
               <img
-                src={userData.profilePicture}
-                alt="Profile"
+                src={avatarSrc}
+                alt="Profiel"
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -59,62 +114,111 @@ function Profile() {
                 {userData?.username?.charAt(0).toUpperCase()}
               </div>
             )}
+
+            {editing && (
+              <button
+                onClick={() => fileInputRef.current.click()}
+                className="absolute inset-0 bg-black/60 flex items-center justify-center text-xs text-white"
+              >
+                Wijzigen
+              </button>
+            )}
           </div>
 
-          {/* USER INFO */}
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-4">
-              <h1 className="text-4xl font-bold">{userData?.username}</h1>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handlePhotoChange}
+          />
 
-              <button className="bg-white text-black px-4 py-2 rounded-lg font-semibold">
-                Edit Profile
-              </button>
-            </div>
+          <div className="flex-1 w-full">
+            {editing ? (
+              <div className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  value={editUsername}
+                  onChange={(e) => setEditUsername(e.target.value)}
+                  placeholder="Gebruikersnaam"
+                  className="bg-zinc-800 p-2 rounded-lg text-white w-full max-w-sm"
+                />
+                <textarea
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  placeholder="Bio"
+                  rows={3}
+                  className="bg-zinc-800 p-2 rounded-lg text-white w-full max-w-sm resize-none"
+                />
 
-            <p className="text-zinc-400 mb-4">
-              {userData?.bio || "No biography yet."}
-            </p>
+                {saveError && (
+                  <p className="text-red-500 text-sm">{saveError}</p>
+                )}
 
-            {/* STATS */}
-            <div className="flex gap-8">
-              <div>
-                <p className="text-2xl font-bold">{userData?.upvotes || 0}</p>
-                <p className="text-zinc-400 text-sm">Upvotes</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="bg-white text-black px-4 py-2 rounded-lg font-semibold disabled:opacity-50"
+                  >
+                    {saving ? "Opslaan..." : "Opslaan"}
+                  </button>
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="bg-zinc-700 text-white px-4 py-2 rounded-lg"
+                  >
+                    Annuleren
+                  </button>
+                </div>
               </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-4 mb-4">
+                  <h1 className="text-4xl font-bold">{userData?.username}</h1>
+                  <button
+                    onClick={openEdit}
+                    className="bg-white text-black px-4 py-2 rounded-lg font-semibold"
+                  >
+                    Profiel bewerken
+                  </button>
+                </div>
 
-              <div>
-                <p className="text-2xl font-bold">
-                  {userData?.friends?.length || 0}
+                <p className="text-zinc-400 mb-4">
+                  {userData?.bio || "Nog geen biografie."}
                 </p>
-                <p className="text-zinc-400 text-sm">Friends</p>
-              </div>
 
-              <div>
-                <p className="text-2xl font-bold">
-                  {userData?.graveRobberyPoints || 0}
-                </p>
-                <p className="text-zinc-400 text-sm">Grave Robbery Points</p>
-              </div>
-            </div>
+                <div className="flex gap-8">
+                  <div>
+                    <p className="text-2xl font-bold">
+                      {userData?.upvotes || 0}
+                    </p>
+                    <p className="text-zinc-400 text-sm">Upvotes</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">
+                      {userData?.friends?.length || 0}
+                    </p>
+                    <p className="text-zinc-400 text-sm">Vrienden</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">
+                      {userData?.graveRobberyPoints || 0}
+                    </p>
+                    <p className="text-zinc-400 text-sm">
+                      Grave Robbery Points
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* POSTS SECTION */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">User Posts</h2>
-
+          <h2 className="text-2xl font-bold mb-6">Posts</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* PLACEHOLDER POSTS */}
             <div className="bg-zinc-900 rounded-2xl h-64 flex items-center justify-center text-zinc-500">
-              No posts yet
-            </div>
-
-            <div className="bg-zinc-900 rounded-2xl h-64 flex items-center justify-center text-zinc-500">
-              No posts yet
-            </div>
-
-            <div className="bg-zinc-900 rounded-2xl h-64 flex items-center justify-center text-zinc-500">
-              No posts yet
+              Nog geen posts
             </div>
           </div>
         </div>
