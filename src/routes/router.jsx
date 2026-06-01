@@ -91,7 +91,6 @@ function Layout() {
 
 function Home() {
   return (
-    <Posts/>
     <div className="p-8">
       <h1 className="text-5xl font-bold mb-4">Welcome to GraveRate</h1>
       <p className="text-zinc-400 max-w-2xl">
