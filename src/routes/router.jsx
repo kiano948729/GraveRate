@@ -3,7 +3,7 @@ import { createBrowserRouter, Link, Outlet } from "react-router-dom";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import Profile from "../pages/Auth/Profile";
-
+import Posts from "../pages/posts/posts";
 import ProtectedRoute from "./ProtectedRoute";
 import { useEffect } from "react";
 import { testConnection } from "../firebase/testConnection";
@@ -58,13 +58,7 @@ function Layout() {
 
 function Home() {
   return (
-    <div className="p-8">
-      <h1 className="text-5xl font-bold mb-4">Welcome to GraveRate</h1>
-
-      <p className="text-zinc-400 max-w-2xl">
-        Discover, rate and share peaceful cemeteries and historical graveyards.
-      </p>
-    </div>
+    <Posts/>
   );
 }
 
