@@ -62,7 +62,6 @@ export default function Posts() {
                     <button className='average-Score'>likes</button>
                     <button className='average-Score'>comments</button>
                     <button className='average-Score'>flag post</button>
-                    <button className='average-Score'>rate this post</button>
                 </div>
             </div>
         </div>
