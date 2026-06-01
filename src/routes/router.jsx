@@ -47,6 +47,12 @@ function Layout() {
           >
             Groepen
           </Link>
+          <Link
+            to="/posts"
+            className="text-zinc-300 hover:text-white transition"
+          >
+            Posts
+          </Link>
 
           {currentUser ? (
             <>
@@ -111,6 +117,7 @@ export const router = createBrowserRouter([
       { path: "group/:id", element: <GroupDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "posts", element: <Posts /> },
       {
         path: "profile",
         element: (
