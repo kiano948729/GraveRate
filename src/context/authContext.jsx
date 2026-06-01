@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
 import { onAuthStateChanged } from "firebase/auth";
-
 import { auth } from "../firebase/config";
+import { logoutUser } from "../firebase/auth";
 
 const AuthContext = createContext();
 
@@ -15,22 +14,20 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        loading,
-      }}
-    >
+    <AuthContext.Provider value={{ currentUser, loading, logout: logoutUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth moet binnen een AuthProvider gebruikt worden");
+  }
+  return context;
 }
