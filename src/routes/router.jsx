@@ -7,6 +7,9 @@ import Profile from "../pages/Auth/Profile";
 import ProtectedRoute from "./ProtectedRoute";
 import { useEffect } from "react";
 import { testConnection } from "../firebase/testConnection";
+import Search from "../pages/Search/Search";
+import Groups from "../pages/Groups/Groups";
+import GroupDetail from "../pages/Groups/GroupDetail";
 
 function Layout() {
   useEffect(() => {
@@ -14,7 +17,6 @@ function Layout() {
   }, []);
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* NAVBAR */}
       <nav className="border-b border-zinc-800 px-8 py-4 flex items-center justify-between">
         <Link to="/" className="text-2xl font-bold">
           GraveRate
@@ -23,6 +25,18 @@ function Layout() {
         <div className="flex gap-6">
           <Link to="/" className="text-zinc-300 hover:text-white transition">
             Home
+          </Link>
+          <Link
+            to="/search"
+            className="text-zinc-300 hover:text-white transition"
+          >
+            Zoeken
+          </Link>
+          <Link
+            to="/groups"
+            className="text-zinc-300 hover:text-white transition"
+          >
+            Groepen
           </Link>
 
           <Link
@@ -48,7 +62,6 @@ function Layout() {
         </div>
       </nav>
 
-      {/* PAGE CONTENT */}
       <main>
         <Outlet />
       </main>
@@ -76,6 +89,18 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: "search",
+        element: <Search />,
+      },
+      {
+        path: "groups",
+        element: <Groups />,
+      },
+      {
+        path: "group/:id",
+        element: <GroupDetail />,
       },
       {
         path: "login",
