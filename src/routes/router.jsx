@@ -9,6 +9,7 @@ import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import Profile from "../pages/Auth/Profile";
 import Posts from "../pages/posts/posts";
+import PostsAdd from "../pages/posts/postsAdd";
 import ProtectedRoute from "./ProtectedRoute";
 import Search from "../pages/Search/Search";
 import Groups from "../pages/Groups/Groups";
@@ -46,6 +47,18 @@ function Layout() {
             className="text-zinc-300 hover:text-white transition"
           >
             Groepen
+          </Link>
+          <Link
+            to="/posts"
+            className="text-zinc-300 hover:text-white transition"
+          >
+            Posts
+          </Link>
+          <Link
+            to="/postsAdd"
+            className="text-zinc-300 hover:text-white transition"
+          >
+            Postsadd
           </Link>
 
           {currentUser ? (
@@ -91,7 +104,6 @@ function Layout() {
 
 function Home() {
   return (
-    <Posts/>
     <div className="p-8">
       <h1 className="text-5xl font-bold mb-4">Welcome to GraveRate</h1>
       <p className="text-zinc-400 max-w-2xl">
@@ -112,6 +124,8 @@ export const router = createBrowserRouter([
       { path: "group/:id", element: <GroupDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "posts", element: <Posts /> },
+      { path: "postsAdd", element: <PostsAdd />},
       {
         path: "profile",
         element: (
