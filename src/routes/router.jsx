@@ -17,7 +17,7 @@ import { db } from "../firebase/config";
 
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
-import Profile from "../pages/Auth/Profile";
+import Profile from "../pages/Auth/profile";
 import ProtectedRoute from "./ProtectedRoute";
 import Search from "../pages/Search/Search";
 import Groups from "../pages/Groups/Groups";
@@ -46,8 +46,7 @@ function NotificationBell() {
       to="/notifications"
       className="relative text-zinc-300 hover:text-white transition"
     >
-      {/* moet nog ff icon worden */}
-      BEL
+      notficaties
       {unread > 0 && (
         <span className="absolute -top-1 -right-2 w-4 h-4 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">
           {unread}
@@ -166,9 +165,9 @@ export const router = createBrowserRouter([
       { path: "search", element: <Search /> },
       { path: "groups", element: <Groups /> },
       { path: "group/:id", element: <GroupDetail /> },
+      { path: "user/:uid", element: <UserProfile /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
-      // { path: "posts", element: <Posts /> },
       {
         path: "profile",
         element: (

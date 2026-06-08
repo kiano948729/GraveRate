@@ -6,15 +6,12 @@ export default function ResultUsers({ users }) {
       {users.map((u) => (
         <Link
           key={u.id}
-          to={`/profile/${u.id}`}
+          to={`/user/${u.id}`}
           className="flex items-center gap-4 bg-zinc-900 p-4 rounded-xl hover:bg-zinc-800"
         >
           <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center overflow-hidden">
             {u.profilePicture ? (
-              <img
-                src={u.profilePicture}
-                className="w-full h-full object-cover"
-              />
+              <img src={u.profilePicture} className="w-full h-full object-cover" />
             ) : (
               u.username?.[0]?.toUpperCase()
             )}
