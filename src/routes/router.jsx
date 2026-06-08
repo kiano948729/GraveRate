@@ -17,7 +17,8 @@ import { db } from "../firebase/config";
 
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
-import Profile from "../pages/Auth/profile";
+import Profile from "../pages/Auth/Profile";
+import Posts from "../pages/posts/posts";
 import ProtectedRoute from "./ProtectedRoute";
 import Search from "../pages/Search/Search";
 import Groups from "../pages/Groups/Groups";
@@ -87,6 +88,12 @@ function Layout() {
             className="text-zinc-300 hover:text-white transition"
           >
             Groepen
+          </Link>
+          <Link
+            to="/posts"
+            className="text-zinc-300 hover:text-white transition"
+          >
+            Posts
           </Link>
 
           {currentUser ? (
@@ -168,6 +175,7 @@ export const router = createBrowserRouter([
       { path: "user/:uid", element: <UserProfile /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "posts", element: <Posts /> },
       {
         path: "profile",
         element: (

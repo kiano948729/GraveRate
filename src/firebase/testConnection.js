@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 
 export async function testConnection() {
   try {
-    const querySnapshot = await getDocs(collection(db, "test"));
+    const querySnapshot = await getDocs(collection(db, "users"));
 
     console.log("Firebase connected!");
     console.log("Documents:", querySnapshot.size);
