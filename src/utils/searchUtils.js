@@ -35,3 +35,7 @@ export function sortCemeteries(cemeteries, sortBy) {
 
   return list;
 }
+
+export function sortLocations(locations) {
+  return [...locations];
+}

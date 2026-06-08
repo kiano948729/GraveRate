@@ -10,10 +10,11 @@ import ResultUsers from "../../components/ResultUsers";
 import ResultPosts from "../../components/ResultPosts";
 import ResultGroups from "../../components/ResultGroups";
 import ResultCemeteries from "../../components/ResultCemeteries";
+import ResultLocations from "../../components/ResultLocations";
 
 import { sortPosts, sortCemeteries } from "../../utils/searchUtils";
 
-const TABS = ["users", "posts", "groups", "cemeteries"];
+const TABS = ["users", "posts", "groups", "cemeteries", "locations"];
 
 export default function Search() {
   const [q, setQ] = useState("");
@@ -25,6 +26,7 @@ export default function Search() {
     posts: [],
     groups: [],
     cemeteries: [],
+    locations: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -36,11 +38,12 @@ export default function Search() {
     setLoading(true);
     setDone(true);
 
-    const [users, posts, groups, cemeteries] = await Promise.all([
+    const [users, posts, groups, cemeteries, locations] = await Promise.all([
       searchUsers(q),
       searchPosts(q),
       searchGroups(q),
       searchCemeteries(q),
+      // searchLocations(q),
     ]);
 
     setData({
@@ -48,6 +51,7 @@ export default function Search() {
       posts: sortPosts(posts, sort),
       groups,
       cemeteries: sortCemeteries(cemeteries, sort),
+      // locations: sortLocations(locations, sort),
     });
 
     setLoading(false);
@@ -63,6 +67,8 @@ export default function Search() {
         return <ResultGroups groups={data.groups} />;
       case "cemeteries":
         return <ResultCemeteries cemeteries={data.cemeteries} />;
+      case "locations":
+        return <ResultLocations locations={data.locations} />;
       default:
         return null;
     }

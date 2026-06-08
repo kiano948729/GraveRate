@@ -4,6 +4,16 @@ import {
   Outlet,
   useNavigate,
 } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../firebase/config";
 
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
@@ -13,6 +23,39 @@ import Search from "../pages/Search/Search";
 import Groups from "../pages/Groups/Groups";
 import GroupDetail from "../pages/Groups/GroupDetail";
 import { useAuth } from "../context/authContext";
+import Notifications from "../pages/Notifications/Notifications";
+import Settings from "../pages/Settings/Settings";
+import UserProfile from "../pages/User/UserProfile";
+
+function NotificationBell() {
+  const { currentUser } = useAuth();
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const q = query(
+      collection(db, "notifications"),
+      where("uid", "==", currentUser.uid),
+      where("read", "==", false),
+    );
+    return onSnapshot(q, (snap) => setUnread(snap.size));
+  }, [currentUser]);
+
+  return (
+    <Link
+      to="/notifications"
+      className="relative text-zinc-300 hover:text-white transition"
+    >
+      {/* moet nog ff icon worden */}
+      BEL
+      {unread > 0 && (
+        <span className="absolute -top-1 -right-2 w-4 h-4 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">
+          {unread}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 function Layout() {
   const { currentUser, logout } = useAuth();
@@ -49,6 +92,7 @@ function Layout() {
 
           {currentUser ? (
             <>
+              <NotificationBell />
               <Link
                 to="/profile"
                 className="text-zinc-300 hover:text-white transition"
@@ -99,6 +143,20 @@ function Home() {
   );
 }
 
+function SettingsWrapper() {
+  const { currentUser } = useAuth();
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    getDoc(doc(db, "users", currentUser.uid)).then((snap) => {
+      if (snap.exists()) setUserData(snap.data());
+    });
+  }, [currentUser]);
+
+  return <Settings userData={userData} />;
+}
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -110,11 +168,28 @@ export const router = createBrowserRouter([
       { path: "group/:id", element: <GroupDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      // { path: "posts", element: <Posts /> },
       {
         path: "profile",
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "notifications",
+        element: (
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedRoute>
+            <SettingsWrapper />
           </ProtectedRoute>
         ),
       },

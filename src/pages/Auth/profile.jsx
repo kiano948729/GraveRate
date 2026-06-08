@@ -10,7 +10,7 @@ function Profile() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // edit state
+  //edit state
   const [editing, setEditing] = useState(false);
   const [editUsername, setEditUsername] = useState("");
   const [editBio, setEditBio] = useState("");
@@ -18,7 +18,7 @@ function Profile() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
-
+  const [isPrivate, setIsPrivate] = useState(false);
   const fileInputRef = useRef();
 
   useEffect(() => {
@@ -28,6 +28,7 @@ function Profile() {
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUserData(userSnap.data());
+          setIsPrivate(userSnap.data().isPrivate || false);
         }
       } catch (error) {
         console.error(error);
@@ -42,6 +43,7 @@ function Profile() {
   function openEdit() {
     setEditUsername(userData?.username ?? "");
     setEditBio(userData?.bio ?? "");
+    setIsPrivate(userData?.isPrivate ?? false);
     setPhotoFile(null);
     setPhotoPreview(null);
     setSaveError("");
@@ -68,6 +70,7 @@ function Profile() {
       const updates = {
         username: editUsername.trim(),
         bio: editBio.trim(),
+        isPrivate,
       };
 
       if (photoFile) {
@@ -102,7 +105,7 @@ function Profile() {
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-zinc-900 rounded-2xl p-8 mb-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
-          <div className="relative w-32 h-32 rounded-full bg-zinc-800 overflow-hidden flex-shrink-0">
+          <div className="relative w-32 h-32 rounded-full bg-zinc-800 overflow-hidden shrink-0">
             {avatarSrc ? (
               <img
                 src={avatarSrc}
@@ -151,6 +154,15 @@ function Profile() {
                   className="bg-zinc-800 p-2 rounded-lg text-white w-full max-w-sm resize-none"
                 />
 
+                <label className="flex items-center justify-between bg-zinc-800 p-3 rounded-lg max-w-sm">
+                  <span>Privé account</span>
+
+                  <input
+                    type="checkbox"
+                    checked={isPrivate}
+                    onChange={(e) => setIsPrivate(e.target.checked)}
+                  />
+                </label>
                 {saveError && (
                   <p className="text-red-500 text-sm">{saveError}</p>
                 )}
@@ -181,6 +193,12 @@ function Profile() {
                   >
                     Profiel bewerken
                   </button>
+                  <Link
+                    to="/settings"
+                    className="bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+                  >
+                    Instellingen
+                  </Link>
                 </div>
 
                 <p className="text-zinc-400 mb-4">
