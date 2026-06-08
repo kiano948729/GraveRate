@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../firebase/config";
@@ -10,7 +11,6 @@ function Profile() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // edit state
   const [editing, setEditing] = useState(false);
   const [editUsername, setEditUsername] = useState("");
   const [editBio, setEditBio] = useState("");
@@ -18,7 +18,7 @@ function Profile() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
-
+  const [editPrivate, setEditPrivate] = useState(false);
   const fileInputRef = useRef();
 
   useEffect(() => {
@@ -35,13 +35,14 @@ function Profile() {
         setLoading(false);
       }
     }
-
     if (currentUser) fetchUser();
   }, [currentUser]);
 
   function openEdit() {
     setEditUsername(userData?.username ?? "");
     setEditBio(userData?.bio ?? "");
+    // gebruik "private" als veldnaam — consistent met auth.js en Settings
+    setEditPrivate(userData?.private ?? false);
     setPhotoFile(null);
     setPhotoPreview(null);
     setSaveError("");
@@ -68,6 +69,7 @@ function Profile() {
       const updates = {
         username: editUsername.trim(),
         bio: editBio.trim(),
+        private: editPrivate,
       };
 
       if (photoFile) {
@@ -77,7 +79,6 @@ function Profile() {
       }
 
       await updateDoc(doc(db, "users", currentUser.uid), updates);
-
       setUserData((prev) => ({ ...prev, ...updates }));
       setEditing(false);
     } catch (err) {
@@ -102,7 +103,8 @@ function Profile() {
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-zinc-900 rounded-2xl p-8 mb-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
-          <div className="relative w-32 h-32 rounded-full bg-zinc-800 overflow-hidden flex-shrink-0">
+          {/* AVATAR */}
+          <div className="relative w-32 h-32 rounded-full bg-zinc-800 overflow-hidden shrink-0">
             {avatarSrc ? (
               <img
                 src={avatarSrc}
@@ -114,7 +116,6 @@ function Profile() {
                 {userData?.username?.charAt(0).toUpperCase()}
               </div>
             )}
-
             {editing && (
               <button
                 onClick={() => fileInputRef.current.click()}
@@ -151,6 +152,21 @@ function Profile() {
                   className="bg-zinc-800 p-2 rounded-lg text-white w-full max-w-sm resize-none"
                 />
 
+                <label className="flex items-center justify-between bg-zinc-800 p-3 rounded-lg max-w-sm cursor-pointer">
+                  <span>Privé account</span>
+                  <button
+                    type="button"
+                    onClick={() => setEditPrivate((v) => !v)}
+                    className={`relative w-12 h-6 rounded-full transition-colors duration-200
+                      ${editPrivate ? "bg-white" : "bg-zinc-600"}`}
+                  >
+                    <span
+                      className={`absolute top-1 w-4 h-4 rounded-full transition-transform duration-200
+                        ${editPrivate ? "translate-x-7 bg-black" : "translate-x-1 bg-white"}`}
+                    />
+                  </button>
+                </label>
+
                 {saveError && (
                   <p className="text-red-500 text-sm">{saveError}</p>
                 )}
@@ -173,14 +189,25 @@ function Profile() {
               </div>
             ) : (
               <>
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-3 flex-wrap mb-4">
                   <h1 className="text-4xl font-bold">{userData?.username}</h1>
+                  {userData?.private && (
+                    <span className="text-xs bg-zinc-800 px-2 py-1 rounded-full text-zinc-400">
+                      Privé
+                    </span>
+                  )}
                   <button
                     onClick={openEdit}
                     className="bg-white text-black px-4 py-2 rounded-lg font-semibold"
                   >
                     Profiel bewerken
                   </button>
+                  <Link
+                    to="/settings"
+                    className="bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+                  >
+                    Instellingen
+                  </Link>
                 </div>
 
                 <p className="text-zinc-400 mb-4">

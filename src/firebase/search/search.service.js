@@ -50,3 +50,30 @@ export async function searchCemeteries(term) {
         normalize(c.description).includes(term),
     );
 }
+
+export async function searchLocations(term) {
+  const snap = await fetchCemeteries();
+
+  const locations = [
+    ...new Map(
+      snap.docs.map((d) => {
+        const data = d.data();
+
+        return [
+          data.location,
+          {
+            id: data.location.toLowerCase(),
+            name: data.location,
+            description: `Locatie van begraafplaatsen`,
+          },
+        ];
+      }),
+    ).values(),
+  ];
+
+  return locations.filter(
+    (l) =>
+      normalize(l.name).includes(term) ||
+      normalize(l.description).includes(term),
+  );
+}
