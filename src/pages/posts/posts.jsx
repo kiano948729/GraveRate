@@ -40,6 +40,7 @@ export default function Posts() {
                 </div>
 
                 <div className='posts-Ratings'>
+                    {/* rating is zelf ingevuld bij plaatsen post.  */}
                     <div className='average-Score'>
                         <p>peace</p>
                         <p>rating</p>

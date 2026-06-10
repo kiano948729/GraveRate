@@ -1,5 +1,6 @@
-@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap");
+@import "tailwindcss";
+
 
 :root {
   --bg: #0a0a0a;
@@ -256,4 +257,107 @@ body::before {
   pointer-events: none;
   z-index: 9999;
   opacity: 0.4;
+}
+
+
+/* style for hardcoded post */
+@import "tailwindcss";
+
+.posts-MainContainer{
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+    min-height: 600px;
+    max-height: 1200px;
+    border-color: white;
+    border: 2px;
+    background-color: rgb(64, 64, 64);
+    border-radius: 25px;
+    justify-self: center;
+}
+
+/*user info on post */ 
+.posts-Top{
+    display: flex;
+    width: 100%;
+    height: 10%;
+    padding-left: 3%;
+}
+.profile-Image{
+    display: flex;
+    width: 8%;
+    border-radius: 50px;
+    max-width: 50px;
+    max-height: 50px;
+    background-color: red;
+}
+.user-Info{
+    display: flex;
+    flex-direction: column;
+    min-width: 80%;
+    max-width: 80%;
+    margin-left: 1%;
+}
+
+/*main picture style */ 
+.main-Image{
+    display: flex;
+    width: 100%;
+    height: 65%;
+    background-color: black;
+}
+
+/*post ratings and buttons */ 
+.posts-BottomBox{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 25%;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+.posts-Info{
+    display: flex;
+    flex-direction: row;
+}
+.posts-Ratings{
+    display: flex;
+    width: 100%;
+    min-height: 5%;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 2px color whitesmoke; 
+}
+.posts-AverageRatings{
+    display: flex;
+    justify-self: end;
+}
+.average-Score{
+    display: flex;
+    flex-direction: column;
+    max-width: 20%;
+    height: 100%;
+    border-radius: 50px;
+    background-color: rebeccapurple;
+    font-size: 9px;
+    align-items: center;
+}
+.posts-BottomButtons{
+    display:flex;
+    flex-direction: row;
+}
+
+
+/*dividers*/
+.posts-Divider{
+    border: none;
+    height: 1px;
+    background-color: whitesmoke;
+    margin: 10px 0;
+}
+@media only screen and (max-width: 800px) {
+.posts-MainContainer{
+    width: 100%;
+    border-radius: 0px;
+}
 }
