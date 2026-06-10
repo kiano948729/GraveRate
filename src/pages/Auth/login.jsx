@@ -1,82 +1,141 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
 import { loginUser, loginWithGoogle } from "../../firebase/auth";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    setLoading(true);
+    setError("");
     try {
-      setError("");
-
       await loginUser(email, password);
-
       navigate("/");
-    } catch (err) {
-      setError(err.message);
+    } catch {
+      setError("Ongeldig e-mailadres of wachtwoord");
+    } finally {
+      setLoading(false);
     }
   }
 
-  async function handleGoogleLogin() {
+  async function handleGoogle() {
+    setError("");
     try {
       await loginWithGoogle();
       navigate("/");
-    } catch (err) {
-      setError(err.message);
+    } catch {
+      setError("Google login mislukt");
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+      }}
+    >
+      <p
+        className="font-display"
+        style={{
+          fontSize: 28,
+          letterSpacing: "0.06em",
+          color: "var(--accent)",
+          marginBottom: 8,
+        }}
+      >
+        GraveRate
+      </p>
+      <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 32 }}>
+        Welkom terug
+      </p>
+
       <form
         onSubmit={handleSubmit}
-        className="bg-zinc-900 p-8 rounded-xl w-full max-w-md flex flex-col gap-4"
+        style={{
+          width: "100%",
+          maxWidth: 360,
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
       >
-        <h1 className="text-3xl font-bold">Login</h1>
-
-        {error && <p className="text-red-500">{error}</p>}
+        {error && (
+          <p
+            style={{
+              color: "var(--danger)",
+              fontSize: 13,
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <input
           type="email"
-          placeholder="Email"
+          placeholder="E-mailadres"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-3 rounded bg-zinc-800"
+          required
         />
-
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Wachtwoord"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-3 rounded bg-zinc-800"
+          required
         />
 
-        <button className="bg-white text-black p-3 rounded font-semibold">
-          Login
-        </button>
-
         <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="bg-zinc-700 p-3 rounded"
+          type="submit"
+          className="btn-primary"
+          disabled={loading}
+          style={{ marginTop: 4 }}
         >
-          Continue with Google
+          {loading ? "Laden..." : "Inloggen"}
         </button>
 
-        <Link to="/register" className="text-sm text-zinc-400">
-          No account? Register
-        </Link>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            margin: "4px 0",
+          }}
+        >
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+          <span style={{ color: "var(--muted)", fontSize: 11 }}>of</span>
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+        </div>
+
+        <button type="button" className="btn-ghost" onClick={handleGoogle}>
+          Doorgaan met Google
+        </button>
+
+        <p
+          style={{
+            textAlign: "center",
+            color: "var(--muted)",
+            fontSize: 13,
+            marginTop: 8,
+          }}
+        >
+          Nog geen account?{" "}
+          <Link to="/register" style={{ color: "var(--text)" }}>
+            Registreren
+          </Link>
+        </p>
       </form>
     </div>
   );
 }
-
-export default Login;
