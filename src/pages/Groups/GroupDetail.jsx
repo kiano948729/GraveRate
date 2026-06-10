@@ -7,119 +7,136 @@ import {
 } from "../../firebase/groups/groups.service";
 import { getGroupPosts } from "../../firebase/posts/posts.service";
 import { useAuth } from "../../context/authContext";
-import StarRating from "../../components/StarRating";
-import { calculateAverageRating } from "../../utils/rating";
-import { ArrowLeft, Lock, Heart, MessageCircle } from "lucide-react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 function PostCard({ post }) {
-  const avg = useMemo(
-    () => calculateAverageRating(post.ratings),
-    [post.ratings],
-  );
-
   return (
-    <div className="bg-zinc-900 rounded-2xl p-5">
-      {post.mediaType === "image" && post.mediaUrl && (
+    <div
+      style={{ borderBottom: "1px solid var(--border)", padding: "14px 16px" }}
+    >
+      <div
+        style={{
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+          marginBottom: 10,
+        }}
+      >
+        <div className="avatar" style={{ width: 32, height: 32, fontSize: 13 }}>
+          {post.authorId?.charAt(0).toUpperCase() ?? "?"}
+        </div>
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 500 }}>{post.authorId}</p>
+          <p style={{ fontSize: 11, color: "var(--muted)" }}>
+            {post.createdAt?.toDate?.()?.toLocaleDateString("nl-NL") ?? ""}
+          </p>
+        </div>
+      </div>
+
+      {post.mediaUrl && post.mediaType === "image" && (
         <img
           src={post.mediaUrl}
           alt=""
-          className="w-full max-h-64 object-cover rounded-xl mb-4"
+          style={{
+            width: "100%",
+            borderRadius: 8,
+            marginBottom: 10,
+            maxHeight: 300,
+            objectFit: "cover",
+          }}
         />
       )}
 
-      <p className="mb-3">{post.description}</p>
+      <p style={{ fontSize: 13, marginBottom: 10 }}>{post.description}</p>
 
-      <div className="flex gap-4 text-sm text-zinc-400 items-center flex-wrap">
-        <span className="flex items-center gap-1">
-          <Heart size={14} /> {post.likes?.length ?? 0}
+      <div
+        style={{
+          display: "flex",
+          gap: 16,
+          color: "var(--muted)",
+          fontSize: 12,
+        }}
+      >
+        <span>
+          {/* hart icon moet nog komen */}
+          {post.likes?.length ?? 0}
         </span>
-        <span className="flex items-center gap-1">
-          <MessageCircle size={14} /> {post.commentsCount ?? 0}
+        <span>
+          {/* chat icon moet nog komen */}
+          {post.commentsCount ?? 0}
         </span>
-
-        {post.ratings && (
-          <div className="flex items-center gap-2">
-            <StarRating value={avg} />
-            <span>{avg.toFixed(1)}</span>
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
 function NewPostForm({ groupId, currentUser, onPosted }) {
-  const [description, setDescription] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!description.trim()) return;
-
-    setSubmitting(true);
-    setError("");
-    try {
-      await addDoc(collection(db, "posts"), {
-        groupId,
-        authorId: currentUser.uid,
-        description: description.trim(),
-        likes: [],
-        commentsCount: 0,
-        ratings: {},
-        createdAt: serverTimestamp(),
-      });
-      setDescription("");
-      onPosted();
-    } catch (err) {
-      setError("Post plaatsen mislukt");
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
+  async function submit() {
+    if (!text.trim()) return;
+    setBusy(true);
+    await addDoc(collection(db, "posts"), {
+      groupId,
+      authorId: currentUser.uid,
+      description: text.trim(),
+      likes: [],
+      commentsCount: 0,
+      ratings: {},
+      createdAt: serverTimestamp(),
+    });
+    setText("");
+    onPosted();
+    setBusy(false);
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-zinc-900 rounded-2xl p-5 flex flex-col gap-3"
+    <div
+      style={{
+        padding: "12px 16px",
+        borderBottom: "1px solid var(--border)",
+        display: "flex",
+        gap: 10,
+      }}
     >
-      <h3 className="font-semibold">Nieuwe post</h3>
-      <textarea
-        className="bg-zinc-800 rounded-lg p-3 resize-none text-white w-full"
-        placeholder="Schrijf iets..."
-        rows={3}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      <button
-        type="submit"
-        disabled={submitting || !description.trim()}
-        className="bg-white text-black px-4 py-2 rounded-lg font-semibold self-end disabled:opacity-50"
+      <div
+        className="avatar"
+        style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}
       >
-        {submitting ? "Plaatsen..." : "Plaatsen"}
-      </button>
-    </form>
+        {currentUser.uid.charAt(0).toUpperCase()}
+      </div>
+      <div style={{ flex: 1 }}>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Schrijf iets..."
+          rows={2}
+          style={{ resize: "none", marginBottom: 8 }}
+        />
+        <button
+          className="btn-primary"
+          onClick={submit}
+          disabled={busy || !text.trim()}
+          style={{ padding: "7px 16px", fontSize: 13 }}
+        >
+          {busy ? "..." : "Plaatsen"}
+        </button>
+      </div>
+    </div>
   );
 }
 
 export default function GroupDetail() {
   const { id } = useParams();
   const { currentUser } = useAuth();
-
   const [group, setGroup] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
-  const isMember = group?.members?.includes(currentUser?.uid);
-  const isOwner = group?.ownerId === currentUser?.uid;
-
   async function loadData() {
-    setLoading(true);
     const [g, p] = await Promise.all([getGroup(id), getGroupPosts(id)]);
     setGroup(g);
     setPosts(p);
@@ -130,117 +147,148 @@ export default function GroupDetail() {
     loadData();
   }, [id]);
 
-  async function toggleMembership() {
-    if (!currentUser) return;
-    setBusy(true);
-    try {
-      if (isMember) {
-        await leaveGroup(id, currentUser.uid);
-      } else {
-        await joinGroup(id, currentUser.uid);
-      }
-      const updated = await getGroup(id);
-      setGroup(updated);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function refreshPosts() {
-    const p = await getGroupPosts(id);
-    setPosts(p);
-  }
-
+  const isMember = group?.members?.includes(currentUser?.uid);
+  const isOwner = group?.ownerId === currentUser?.uid;
   const canSeePosts = !group?.private || isMember;
 
-  if (loading) {
-    return <div className="text-white p-6">Laden...</div>;
+  async function toggleMembership() {
+    setBusy(true);
+    if (isMember) await leaveGroup(id, currentUser.uid);
+    else await joinGroup(id, currentUser.uid);
+    const updated = await getGroup(id);
+    setGroup(updated);
+    setBusy(false);
   }
 
-  if (!group) {
+  if (loading)
     return (
-      <div className="text-white p-6">
-        Groep niet gevonden.{" "}
-        <Link to="/groups" className="underline">
-          Terug
-        </Link>
-      </div>
+      <p style={{ padding: 40, textAlign: "center", color: "var(--muted)" }}>
+        Laden...
+      </p>
     );
-  }
+  if (!group)
+    return (
+      <p style={{ padding: 40, textAlign: "center", color: "var(--muted)" }}>
+        Groep niet gevonden.
+      </p>
+    );
 
   return (
-    <div className="max-w-3xl mx-auto p-6 text-white">
-      <Link
-        to="/groups"
-        className="text-zinc-500 text-sm flex items-center gap-1 mb-4"
+    <div>
+      {/* Groep header */}
+      <div
+        style={{
+          padding: "20px 16px 16px",
+          borderBottom: "1px solid var(--border)",
+        }}
       >
-        <ArrowLeft size={14} /> Terug naar groepen
-      </Link>
-
-      <div className="bg-zinc-900 p-6 rounded-2xl">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold">{group.name}</h1>
-            {group.description && (
-              <p className="text-zinc-400 mt-1">{group.description}</p>
-            )}
-            <p className="text-zinc-500 text-sm mt-2">
-              {group.members?.length ?? 0} leden
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            alignItems: "center",
+            marginBottom: 14,
+          }}
+        >
+          <div
+            className="avatar"
+            style={{
+              width: 60,
+              height: 60,
+              fontSize: 24,
+              flexShrink: 0,
+              color: "var(--accent)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            {group.name.charAt(0).toUpperCase()}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 4,
+              }}
+            >
+              <p className="font-display" style={{ fontSize: 16 }}>
+                {group.name}
+              </p>
               {group.private && (
-                <span className="ml-2 inline-flex items-center gap-1">
-                  <Lock size={12} /> Privé
+                <span style={{ fontSize: 10, color: "var(--muted)" }}>
+                  privé
                 </span>
               )}
+            </div>
+            <p style={{ color: "var(--muted)", fontSize: 12 }}>
+              {group.members?.length ?? 0} leden
             </p>
           </div>
-
-          {currentUser && !isOwner && (
-            <button
-              disabled={busy}
-              onClick={toggleMembership}
-              className="px-4 py-2 rounded-xl bg-white text-black font-semibold disabled:opacity-50"
-            >
-              {isMember ? "Verlaten" : "Joinen"}
-            </button>
-          )}
-
-          {isOwner && (
-            <span className="text-xs bg-zinc-800 px-3 py-1 rounded-full">
-              eigenaar
-            </span>
-          )}
         </div>
+
+        {group.description && (
+          <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 14 }}>
+            {group.description}
+          </p>
+        )}
+
+        {currentUser && !isOwner && (
+          <button
+            className={isMember ? "btn-ghost" : "btn-primary"}
+            onClick={toggleMembership}
+            disabled={busy}
+            style={{ width: "100%", textAlign: "center" }}
+          >
+            {isMember ? "Groep verlaten" : "Lid worden"}
+          </button>
+        )}
+        {isOwner && (
+          <p
+            style={{
+              fontSize: 12,
+              color: "var(--accent)",
+              textAlign: "center",
+            }}
+          >
+            Jij bent eigenaar
+          </p>
+        )}
       </div>
 
       {group.private && !isMember && (
-        <div className="mt-6 bg-zinc-900 p-6 rounded-2xl text-center">
-          <p className="flex items-center justify-center gap-2">
-            <Lock size={16} /> Privé groep
-          </p>
-          <p className="text-zinc-400 text-sm mt-1">
+        <div style={{ padding: 40, textAlign: "center" }}>
+          <p style={{ fontSize: 24, marginBottom: 8 }}>🔒</p>
+          <p style={{ color: "var(--muted)", fontSize: 13 }}>
             Word lid om de posts te zien
           </p>
         </div>
       )}
 
       {canSeePosts && (
-        <div className="mt-6 space-y-4">
+        <>
           {isMember && (
             <NewPostForm
               groupId={id}
               currentUser={currentUser}
-              onPosted={refreshPosts}
+              onPosted={() => getGroupPosts(id).then(setPosts)}
             />
           )}
-
           {posts.length === 0 ? (
-            <p className="text-zinc-500 text-center py-8">
-              Nog geen posts in deze groep.
+            <p
+              style={{
+                padding: 40,
+                textAlign: "center",
+                color: "var(--muted)",
+                fontSize: 13,
+              }}
+            >
+              Nog geen posts.
             </p>
           ) : (
             posts.map((p) => <PostCard key={p.id} post={p} />)
           )}
-        </div>
+        </>
       )}
     </div>
   );

@@ -5,9 +5,9 @@ import { registerUser, loginWithGoogle } from "../../firebase/auth";
 function getAuthError(code) {
   switch (code) {
     case "auth/email-already-in-use":
-      return "Email al in gebruik";
+      return "E-mail al in gebruik";
     case "auth/weak-password":
-      return "Wachtwoord moet minimaal 6 tekens zijn";
+      return "Wachtwoord minimaal 6 tekens";
     case "auth/invalid-email":
       return "Ongeldig e-mailadres";
     default:
@@ -15,34 +15,34 @@ function getAuthError(code) {
   }
 }
 
-function Register() {
+export default function Register() {
   const navigate = useNavigate();
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
+    if (password !== confirm)
       return setError("Wachtwoorden komen niet overeen");
-    }
-
+    setLoading(true);
+    setError("");
     try {
-      setError("");
       await registerUser(username, email, password);
       navigate("/");
     } catch (err) {
       setError(getAuthError(err.code));
+    } finally {
+      setLoading(false);
     }
   }
 
-  async function handleGoogleRegister() {
+  async function handleGoogle() {
+    setError("");
     try {
-      setError("");
       await loginWithGoogle();
       navigate("/");
     } catch (err) {
@@ -51,29 +51,65 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+      }}
+    >
+      <p
+        className="font-display"
+        style={{
+          fontSize: 28,
+          letterSpacing: "0.06em",
+          color: "var(--accent)",
+          marginBottom: 8,
+        }}
+      >
+        GraveRate
+      </p>
+      <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 32 }}>
+        Maak een account aan
+      </p>
+
       <form
         onSubmit={handleSubmit}
-        className="bg-zinc-900 p-8 rounded-xl w-full max-w-md flex flex-col gap-4"
+        style={{
+          width: "100%",
+          maxWidth: 360,
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
       >
-        <h1 className="text-3xl font-bold">Registreren</h1>
-
-        {error && <p className="text-red-500">{error}</p>}
+        {error && (
+          <p
+            style={{
+              color: "var(--danger)",
+              fontSize: 13,
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <input
           type="text"
           placeholder="Gebruikersnaam"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="p-3 rounded bg-zinc-800"
           required
         />
         <input
           type="email"
-          placeholder="E-mail"
+          placeholder="E-mailadres"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-3 rounded bg-zinc-800"
           required
         />
         <input
@@ -81,39 +117,56 @@ function Register() {
           placeholder="Wachtwoord"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-3 rounded bg-zinc-800"
           required
         />
         <input
           type="password"
           placeholder="Wachtwoord bevestigen"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="p-3 rounded bg-zinc-800"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
           required
         />
 
         <button
           type="submit"
-          className="bg-white text-black p-3 rounded font-semibold"
+          className="btn-primary"
+          disabled={loading}
+          style={{ marginTop: 4 }}
         >
-          Registreren
+          {loading ? "Laden..." : "Registreren"}
         </button>
 
-        <button
-          type="button"
-          onClick={handleGoogleRegister}
-          className="bg-zinc-700 p-3 rounded"
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            margin: "4px 0",
+          }}
         >
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+          <span style={{ color: "var(--muted)", fontSize: 11 }}>of</span>
+          <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+        </div>
+
+        <button type="button" className="btn-ghost" onClick={handleGoogle}>
           Doorgaan met Google
         </button>
 
-        <Link to="/login" className="text-sm text-zinc-400">
-          Al een account? Inloggen
-        </Link>
+        <p
+          style={{
+            textAlign: "center",
+            color: "var(--muted)",
+            fontSize: 13,
+            marginTop: 8,
+          }}
+        >
+          Al een account?{" "}
+          <Link to="/login" style={{ color: "var(--text)" }}>
+            Inloggen
+          </Link>
+        </p>
       </form>
     </div>
   );
 }
-
-export default Register;

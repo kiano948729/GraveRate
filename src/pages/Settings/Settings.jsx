@@ -1,86 +1,155 @@
-import { useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useAuth } from "../../context/authContext";
 
-const BLOCK_REASONS = [
-  "Spam",
-  "Ongepaste inhoud",
-  "Intimidatie",
-  "Nep account",
-  "Anders",
-];
-
-export default function Settings({ userData, onUpdate }) {
-  const { currentUser } = useAuth();
-
-  const [isPrivate, setIsPrivate] = useState(userData?.private ?? false);
-  const [saving, setSaving] = useState(false);
+export default function Settings() {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  async function savePrivacy(value) {
-    setIsPrivate(value);
-    setSaving(true);
+  useEffect(() => {
+    if (!currentUser) return;
+    getDoc(doc(db, "users", currentUser.uid)).then((snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setUserData(data);
+        setIsPrivate(data.private ?? false);
+      }
+    });
+  }, [currentUser]);
+
+  async function handlePrivacyToggle() {
+    const newVal = !isPrivate;
+    setIsPrivate(newVal);
     setSaved(false);
-    await updateDoc(doc(db, "users", currentUser.uid), { private: value });
-    setSaving(false);
+    await updateDoc(doc(db, "users", currentUser.uid), { private: newVal });
     setSaved(true);
-    onUpdate?.({ private: value });
     setTimeout(() => setSaved(false), 2000);
   }
 
+  async function handleLogout() {
+    await logout();
+    navigate("/login");
+  }
+
   return (
-    <div className="max-w-2xl mx-auto p-6 text-white">
-      <h1 className="text-3xl font-bold mb-8">Instellingen</h1>
-
-      <section className="bg-zinc-900 rounded-2xl p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Privacy</h2>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium">Privé profiel</p>
-            <p className="text-zinc-400 text-sm mt-1">
-              Alleen vrienden kunnen je posts zien
-            </p>
-          </div>
-
-          <button
-            onClick={() => savePrivacy(!isPrivate)}
-            disabled={saving}
-            className={`relative w-12 h-6 rounded-full transition-colors duration-200 focus:outline-none
-              ${isPrivate ? "bg-white" : "bg-zinc-600"}`}
+    <div
+      style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}
+    >
+      <div className="card">
+        <div
+          style={{
+            padding: "14px 16px",
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: 8,
+            }}
           >
-            <span
-              className={`absolute top-1 w-4 h-4 rounded-full transition-transform duration-200
-                ${isPrivate ? "translate-x-7 bg-black" : "translate-x-1 bg-white"}`}
-            />
-          </button>
+            Account
+          </p>
+          <p style={{ fontWeight: 600 }}>{userData?.username}</p>
+          <p style={{ fontSize: 12, color: "var(--muted)" }}>
+            {userData?.email}
+          </p>
         </div>
+      </div>
 
-        {saved && <p className="text-green-400 text-sm mt-3">Opgeslagen</p>}
-      </section>
+      <div className="card">
+        <div
+          style={{
+            padding: "14px 16px",
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: 12,
+            }}
+          >
+            Privacy
+          </p>
 
-      <section className="bg-zinc-900 rounded-2xl p-6">
-        <h2 className="text-xl font-semibold mb-2">Geblokkeerde gebruikers</h2>
-        <p className="text-zinc-400 text-sm mb-4">
-          Je kunt gebruikers deblokkeren via hun profielpagina.
-        </p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 500 }}>Privé profiel</p>
+              <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>
+                Alleen vrienden zien je posts
+              </p>
+            </div>
+            <button
+              onClick={handlePrivacyToggle}
+              style={{
+                width: 44,
+                height: 24,
+                borderRadius: 12,
+                border: "none",
+                cursor: "pointer",
+                background: isPrivate ? "var(--text)" : "var(--surface2)",
+                outline: "1px solid var(--border)",
+                position: "relative",
+                transition: "background 0.2s",
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 3,
+                  width: 18,
+                  height: 18,
+                  borderRadius: "50%",
+                  background: isPrivate ? "var(--bg)" : "var(--muted)",
+                  transition: "left 0.2s",
+                  left: isPrivate ? 23 : 3,
+                }}
+              />
+            </button>
+          </div>
+          {saved && (
+            <p style={{ fontSize: 12, color: "var(--accent)", marginTop: 8 }}>
+              Opgeslagen
+            </p>
+          )}
+        </div>
+      </div>
 
-        {!userData?.blockedUsers?.length ? (
-          <p className="text-zinc-500 text-sm">Geen geblokkeerde gebruikers.</p>
-        ) : (
-          <ul className="space-y-2">
-            {userData.blockedUsers.map((uid) => (
-              <li
-                key={uid}
-                className="text-zinc-400 text-sm bg-zinc-800 px-3 py-2 rounded-lg"
-              >
-                {uid}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="card">
+        <button
+          onClick={handleLogout}
+          style={{
+            width: "100%",
+            padding: "14px 16px",
+            textAlign: "left",
+            color: "var(--danger)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 14,
+          }}
+        >
+          Uitloggen
+        </button>
+      </div>
     </div>
   );
 }

@@ -8,11 +8,8 @@ import { useAuth } from "../../context/authContext";
 
 export default function Groups() {
   const { currentUser } = useAuth();
-
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ name: "", desc: "", isPrivate: false });
   const [submitting, setSubmitting] = useState(false);
@@ -23,71 +20,153 @@ export default function Groups() {
 
   async function load() {
     setLoading(true);
-    setError("");
-    try {
-      const data = await getAllGroups();
-      setItems(data);
-    } catch (err) {
-      setError("Groepen laden mislukt");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    const data = await getAllGroups();
+    setItems(data);
+    setLoading(false);
   }
 
   async function submit() {
     if (!form.name.trim()) return;
-
     setSubmitting(true);
-    try {
-      await createGroup(currentUser.uid, form.name, form.desc, form.isPrivate);
-      setModal(false);
-      setForm({ name: "", desc: "", isPrivate: false });
-      load();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
+    await createGroup(currentUser.uid, form.name, form.desc, form.isPrivate);
+    setModal(false);
+    setForm({ name: "", desc: "", isPrivate: false });
+    load();
+    setSubmitting(false);
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 text-white">
-      <div className="flex justify-between mb-6">
-        <h1 className="text-4xl font-bold">Groepen</h1>
-
+    <div>
+      <div
+        style={{
+          padding: "12px 16px",
+          display: "flex",
+          justifyContent: "flex-end",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
         {currentUser && (
           <button
+            className="btn-primary"
             onClick={() => setModal(true)}
-            className="bg-white text-black px-4 py-2 rounded-xl font-semibold"
+            style={{ padding: "8px 16px", fontSize: 13 }}
           >
-            + Nieuw
+            + Nieuwe groep
           </button>
         )}
       </div>
 
-      {loading && <p className="text-zinc-500">Laden...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      <div>
+        {loading && (
+          <p
+            style={{
+              textAlign: "center",
+              color: "var(--muted)",
+              padding: 40,
+              fontSize: 13,
+            }}
+          >
+            Laden...
+          </p>
+        )}
 
-      {!loading && !error && items.length === 0 && (
-        <p className="text-zinc-500">Nog geen groepen.</p>
-      )}
+        {!loading && items.length === 0 && (
+          <p
+            style={{
+              textAlign: "center",
+              color: "var(--muted)",
+              padding: 40,
+              fontSize: 13,
+            }}
+          >
+            Nog geen groepen. Maak de eerste aan!
+          </p>
+        )}
 
-      <div className="space-y-3">
         {items.map((g) => (
           <Link
             key={g.id}
             to={`/group/${g.id}`}
-            className="block bg-zinc-900 p-4 rounded-xl hover:bg-zinc-800 transition"
+            style={{ textDecoration: "none" }}
           >
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-semibold">{g.name}</p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "14px 16px",
+                borderBottom: "1px solid var(--border)",
+                transition: "background 0.12s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "var(--surface)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "transparent")
+              }
+            >
+              {/* Groep avatar */}
+              <div
+                className="avatar"
+                style={{
+                  width: 44,
+                  height: 44,
+                  fontSize: 18,
+                  flexShrink: 0,
+                  background: "var(--surface2)",
+                  border: "1px solid var(--border)",
+                  color: "var(--accent)",
+                  fontFamily: "Cinzel, serif",
+                }}
+              >
+                {g.name.charAt(0).toUpperCase()}
+              </div>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <p
+                    style={{
+                      fontWeight: 600,
+                      fontSize: 14,
+                      color: "var(--text)",
+                    }}
+                  >
+                    {g.name}
+                  </p>
+                  {g.private && (
+                    <span
+                      style={{
+                        fontSize: 10,
+                        color: "var(--muted)",
+                        background: "var(--surface2)",
+                        padding: "1px 6px",
+                        borderRadius: 10,
+                        border: "1px solid var(--border)",
+                      }}
+                    >
+                      privé
+                    </span>
+                  )}
+                </div>
                 {g.description && (
-                  <p className="text-zinc-400 text-sm mt-1">{g.description}</p>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: "var(--muted)",
+                      marginTop: 2,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {g.description}
+                  </p>
                 )}
               </div>
-              <span className="text-zinc-500 text-sm">
+
+              <span
+                style={{ fontSize: 12, color: "var(--muted)", flexShrink: 0 }}
+              >
                 {g.members?.length ?? 0} leden
               </span>
             </div>
@@ -95,58 +174,125 @@ export default function Groups() {
         ))}
       </div>
 
+      {/* Modal */}
       {modal && (
         <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
           onClick={() => setModal(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.85)",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            zIndex: 200,
+          }}
         >
           <div
-            className="bg-zinc-900 p-6 rounded-xl w-full max-w-sm flex flex-col gap-3"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "var(--surface)",
+              borderRadius: "16px 16px 0 0",
+              borderTop: "1px solid var(--border)",
+              padding: 24,
+              width: "100%",
+              maxWidth: 600,
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
           >
-            <h2 className="text-xl font-bold">Nieuwe groep</h2>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 4,
+              }}
+            >
+              <p className="font-display" style={{ fontSize: 16 }}>
+                Nieuwe groep
+              </p>
+              <button
+                onClick={() => setModal(false)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "var(--muted)",
+                  cursor: "pointer",
+                  fontSize: 18,
+                }}
+              >
+                ✕
+              </button>
+            </div>
 
             <input
-              className="w-full p-2 bg-zinc-800 rounded"
               placeholder="Naam"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
-
             <textarea
-              className="w-full p-2 bg-zinc-800 rounded resize-none"
-              placeholder="Beschrijving"
+              placeholder="Beschrijving (optioneel)"
               rows={3}
               value={form.desc}
               onChange={(e) => setForm({ ...form, desc: e.target.value })}
+              style={{ resize: "none" }}
             />
 
-            <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.isPrivate}
-                onChange={(e) =>
-                  setForm({ ...form, isPrivate: e.target.checked })
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px",
+                background: "var(--surface2)",
+                borderRadius: 8,
+                cursor: "pointer",
+              }}
+            >
+              <span style={{ fontSize: 14 }}>Privé groep</span>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm((f) => ({ ...f, isPrivate: !f.isPrivate }))
                 }
-              />
-              Privé groep
+                style={{
+                  width: 44,
+                  height: 24,
+                  borderRadius: 12,
+                  border: "none",
+                  cursor: "pointer",
+                  background: form.isPrivate
+                    ? "var(--text)"
+                    : "var(--surface2)",
+                  outline: "1px solid var(--border)",
+                  position: "relative",
+                  transition: "background 0.2s",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 3,
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    background: form.isPrivate ? "var(--bg)" : "var(--muted)",
+                    transition: "left 0.2s",
+                    left: form.isPrivate ? 23 : 3,
+                  }}
+                />
+              </button>
             </label>
 
-            <div className="flex gap-3 mt-1">
-              <button
-                onClick={submit}
-                disabled={submitting || !form.name.trim()}
-                className="flex-1 bg-white text-black py-2 rounded font-semibold disabled:opacity-50"
-              >
-                {submitting ? "Maken..." : "Maken"}
-              </button>
-              <button
-                onClick={() => setModal(false)}
-                className="flex-1 bg-zinc-700 text-white py-2 rounded"
-              >
-                Annuleren
-              </button>
-            </div>
+            <button
+              className="btn-primary"
+              onClick={submit}
+              disabled={submitting || !form.name.trim()}
+            >
+              {submitting ? "Aanmaken..." : "Aanmaken"}
+            </button>
           </div>
         </div>
       )}
