@@ -1,11 +1,11 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
-  allowCypressEnv: false,
-
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
+    baseUrl: "http://localhost:5173",
+    viewportWidth: 390,
+    viewportHeight: 844,
+    //simuleert een mobiel scherm want wie gebruikt er nou sociale media op desktop 
+    setupNodeEvents(on, config) {},
   },
 });
