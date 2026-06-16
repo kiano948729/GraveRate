@@ -1,5 +1,4 @@
 import '../../index.css';
-import '../../style/posts.css'
 import hero from '../../assets/hero.png';
 import { useEffect, useState } from "react";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";

@@ -12,6 +12,7 @@ import GroupDetail from "../pages/Groups/GroupDetail";
 import ProtectedRoute from "./ProtectedRoute";
 import Notifications from "../pages/Notifications/Notifications";
 import PostStemp from "../pages/posts/postStemp";
+import Posts from "../pages/posts/posts";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "postStemp", element: <PostStemp />},
+      { path: "posts", element: <Posts /> },
       {
         path: "profile",
         element: (

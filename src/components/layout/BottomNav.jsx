@@ -37,6 +37,10 @@ export default function BottomNav() {
         <IconSearch />
         tempposts
       </Link>
+      <Link to="/posts" className={p.startsWith("/posts") ? "active" : ""}>
+        <IconSearch />
+        nieuwe post maken
+      </Link>
 
       <Link to="/groups" className={p.startsWith("/group") ? "active" : ""}>
         <IconGroups filled={p.startsWith("/group")} />
