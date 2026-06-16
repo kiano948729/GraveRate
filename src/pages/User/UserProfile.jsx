@@ -105,7 +105,7 @@ export default function UserProfile() {
       <div className="bg-zinc-900 rounded-2xl p-8 mb-6 flex flex-col md:flex-row gap-6 items-center md:items-start">
 
         {/* AVATAR */}
-        <div className="w-32 h-32 rounded-full bg-zinc-800 overflow-hidden flex-shrink-0">
+        <div className="w-32 h-32 rounded-full bg-zinc-800 overflow-hidden shrink-0">
           {avatarSrc ? (
             <img src={avatarSrc} alt="" className="w-full h-full object-cover" />
           ) : (

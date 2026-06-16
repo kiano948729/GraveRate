@@ -23,7 +23,7 @@ export default function Home() {
             marginBottom: 12,
           }}
         >
-          Est. MMXXIV
+          Est. MMXXVI
         </p>
         <h1
           className="font-display"
