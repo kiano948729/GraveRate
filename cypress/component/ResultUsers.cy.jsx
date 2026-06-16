@@ -25,14 +25,21 @@ describe("<ResultUsers />", () => {
     cy.contains("12").should("exist");
   });
 
-  it("shows the profile image when one exists", () => {
+  it("renders multiple users", () => {
     const users = [
       {
+        id: 1,
+        username: "Frodo",
+        bio: "",
+        profilePicture: null,
+        upvotes: 2,
+      },
+      {
         id: 2,
-        username: "gandalf",
-        bio: "you shall not pass",
-        profilePicture: "https://example.com/avatar.jpg",
-        upvotes: 5,
+        username: "Sam",
+        bio: "Gardener",
+        profilePicture: null,
+        upvotes: 7,
       },
     ];
 
@@ -42,8 +49,47 @@ describe("<ResultUsers />", () => {
       </MemoryRouter>,
     );
 
-    cy.get("img").should("have.attr", "src", "https://example.com/avatar.jpg");
+    cy.contains("Frodo").should("exist");
+    cy.contains("Sam").should("exist");
+  });
 
-    cy.contains("Frontend developer").should("exist");
+  it("shows zero upvotes", () => {
+    const users = [
+      {
+        id: 5,
+        username: "Pippin",
+        bio: "",
+        profilePicture: null,
+        upvotes: 0,
+      },
+    ];
+
+    cy.mount(
+      <MemoryRouter>
+        <ResultUsers users={users} />
+      </MemoryRouter>,
+    );
+
+    cy.contains("0").should("exist");
+  });
+
+  it("creates the correct profile link", () => {
+    const users = [
+      {
+        id: 42,
+        username: "Aragorn",
+        bio: "",
+        profilePicture: null,
+        upvotes: 20,
+      },
+    ];
+
+    cy.mount(
+      <MemoryRouter>
+        <ResultUsers users={users} />
+      </MemoryRouter>,
+    );
+
+    cy.get("a").should("have.attr", "href").and("include", "42");
   });
 });

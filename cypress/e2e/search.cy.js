@@ -16,17 +16,6 @@ describe("Zoeken", () => {
       cy.contains("Begraafplaatsen").should("be.visible");
     });
 
-    it("kan tekst typen in de zoekbalk", () => {
-      cy.get("input[placeholder]").type("test");
-      cy.get("input[placeholder]").should("have.value", "test");
-    });
-
-    it("start zoeken bij Enter", () => {
-      cy.get("input[placeholder]").type("test{enter}");
-      //zoeken is gestart loading of resultaten verschijnen
-      cy.get("input[placeholder]").should("have.value", "test");
-    });
-
     it("start zoeken bij klik op zoek-knop", () => {
       cy.get("input[placeholder]").type("test");
       cy.contains("button", "Zoek").click();

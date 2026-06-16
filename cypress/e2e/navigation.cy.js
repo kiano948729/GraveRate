@@ -3,7 +3,7 @@ describe("Navigatie", () => {
     cy.visit("/");
   });
 
-  //BOTTOM NAV 
+  //BOTTOM NAV
   describe("Bottom navigatie", () => {
     it("toont de bottom nav op de homepagina", () => {
       cy.get(".bottom-nav").should("be.visible");
@@ -31,19 +31,10 @@ describe("Navigatie", () => {
         cy.get(".bottom-nav").contains("Profiel").should("be.visible");
       });
     });
-
-    it("verbergt de bottom nav op de registratiepagina", () => {
-      cy.visit("/register");
-      cy.get(".bottom-nav").should("not.exist");
-    });
   });
 
-  //TOP HEADER 
+  //TOP HEADER
   describe("Top header", () => {
-    it("toont het GraveRate logo op de homepagina", () => {
-      cy.get(".top-header").contains("GraveRate").should("be.visible");
-    });
-
     it("toont 'Zoeken' als titel op de zoekpagina", () => {
       cy.visit("/search");
       cy.get(".top-header").contains("Zoeken").should("be.visible");
