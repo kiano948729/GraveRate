@@ -11,6 +11,8 @@ import Groups from "../pages/Groups/Groups";
 import GroupDetail from "../pages/Groups/GroupDetail";
 import ProtectedRoute from "./ProtectedRoute";
 import Notifications from "../pages/Notifications/Notifications";
+import PostStemp from "../pages/posts/postStemp";
+import Posts from "../pages/posts/posts";
 import UserProfile from "../pages/User/UserProfile";
 
 export const router = createBrowserRouter([
@@ -24,6 +26,8 @@ export const router = createBrowserRouter([
       { path: "group/:id", element: <GroupDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "postStemp", element: <PostStemp />},
+      { path: "posts", element: <Posts /> },
       { path: "user/:uid", element: <UserProfile /> },
       {
         path: "profile",
