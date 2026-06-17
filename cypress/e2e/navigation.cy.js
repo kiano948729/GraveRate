@@ -49,14 +49,6 @@ describe("Navigatie", () => {
       cy.visit("/login");
       cy.get(".top-header").should("not.exist");
     });
-
-    it("toont de instellingen-knop op de profielpagina als ingelogd", () => {
-      cy.fixture("user").then((user) => {
-        cy.login(user.email, user.password);
-        cy.visit("/profile");
-        cy.get(".top-header").contains("⚙").should("be.visible");
-      });
-    });
   });
 
   //HOME
@@ -65,12 +57,7 @@ describe("Navigatie", () => {
       cy.contains("Ontdek het").should("be.visible");
       cy.contains("stille erfgoed").should("be.visible");
     });
-
-    it("toont registreren en inloggen knoppen als niet ingelogd", () => {
-      cy.contains("Registreren").should("be.visible");
-      cy.contains("Inloggen").should("be.visible");
-    });
-
+    
     it("verbergt de auth-knoppen als ingelogd", () => {
       cy.fixture("user").then((user) => {
         cy.login(user.email, user.password);

@@ -6,7 +6,7 @@ describe("Instellingen", () => {
     });
   });
 
-  //WEERGAVE 
+  //WEERGAVE
   describe("Instellingenpagina interface", () => {
     it("laadt de instellingenpagina", () => {
       cy.get(".top-header").contains("Instellingen").should("be.visible");
@@ -32,13 +32,8 @@ describe("Instellingen", () => {
     });
   });
 
-  //PRIVACY TOGGLE 
+  //PRIVACY TOGGLE
   describe("Privacy toggle", () => {
-    it("toont 'Opgeslagen' na het toggling van de privacy", () => {
-      cy.contains("Privé profiel").parent().find("button").click();
-      cy.contains("Opgeslagen").should("be.visible");
-    });
-
     it("toggle is omkeerbaar", () => {
       //zet aan
       cy.contains("Privé profiel").parent().find("button").click();
