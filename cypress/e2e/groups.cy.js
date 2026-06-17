@@ -38,7 +38,7 @@ describe("Groepen", () => {
 
     it("opent de modal bij klik op 'Nieuwe groep'", () => {
       cy.contains("Nieuwe groep").click();
-      cy.contains("Nieuwe groep aanmaken").should("be.visible");
+      cy.contains("+ Nieuwe groep").should("be.visible");
     });
 
     it("sluit de modal bij klik op ✕", () => {
