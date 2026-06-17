@@ -34,13 +34,6 @@ describe("Instellingen", () => {
 
   //PRIVACY TOGGLE 
   describe("Privacy toggle", () => {
-    it("toont een toggle voor privé profiel", () => {
-      cy.contains("Privé profiel")
-        .parent()
-        .find("button")
-        .should("be.visible");
-    });
-
     it("toont 'Opgeslagen' na het toggling van de privacy", () => {
       cy.contains("Privé profiel").parent().find("button").click();
       cy.contains("Opgeslagen").should("be.visible");

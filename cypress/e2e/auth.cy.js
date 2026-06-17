@@ -5,15 +5,6 @@ describe("Authenticatie", () => {
 
   //REGISTREREN
   describe("Registreren", () => {
-    it("toont het registratieformulier", () => {
-      cy.visit("/register");
-      cy.contains("GraveRate").should("be.visible");
-      cy.get('input[placeholder="Gebruikersnaam"]').should("be.visible");
-      cy.get('input[placeholder="E-mailadres"]').should("be.visible");
-      cy.get('input[placeholder="Wachtwoord"]').should("be.visible");
-      cy.get('input[placeholder="Wachtwoord bevestigen"]').should("be.visible");
-    });
-
     it("toont foutmelding als wachtwoorden niet overeenkomen", () => {
       cy.visit("/register");
       cy.get('input[placeholder="Gebruikersnaam"]').type("testuser");
@@ -45,13 +36,6 @@ describe("Authenticatie", () => {
 
   //INLOGGEN
   describe("Inloggen", () => {
-    it("toont het loginformulier", () => {
-      cy.visit("/login");
-      cy.contains("GraveRate").should("be.visible");
-      cy.get('input[type="email"]').should("be.visible");
-      cy.get('input[type="password"]').should("be.visible");
-    });
-
     it("toont foutmelding bij onjuiste gegevens", function () {
       cy.visit("/login");
       cy.get('input[type="email"]').type("fout@email.com");

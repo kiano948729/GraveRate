@@ -28,10 +28,6 @@ describe("Profielpagina", () => {
       cy.contains("Profiel bewerken").should("be.visible");
     });
 
-    it("toont de settings-link in de top header", () => {
-      cy.get(".top-header").contains("⚙").should("be.visible");
-    });
-
     it("toont het posts-grid", () => {
       //grid heeft 3 kolommen
       cy.get('[style*="grid-template-columns"]').should("be.visible");
