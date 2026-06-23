@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1782127975538" clover="3.2.0">
+  <project timestamp="1782127975539" name="All files">
+    <metrics statements="134" coveredstatements="28" conditionals="33" coveredconditionals="0" methods="80" coveredmethods="13" elements="247" coveredelements="41" complexity="0" loc="134" ncloc="134" packages="8" files="14" classes="14"/>
+    <package name="firebase">
+      <metrics statements="20" coveredstatements="10" conditionals="1" coveredconditionals="0" methods="4" coveredmethods="3"/>
+      <file name="auth.js" path="C:/Users/kiano/graverate/src/firebase/auth.js">
+        <metrics statements="15" coveredstatements="5" conditionals="1" coveredconditionals="0" methods="4" coveredmethods="3"/>
+        <line num="13" count="127" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="46" type="stmt"/>
+        <line num="47" count="44" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="77" count="4" type="stmt"/>
+      </file>
+      <file name="config.js" path="C:/Users/kiano/graverate/src/firebase/config.js">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="6" count="127" type="stmt"/>
+        <line num="16" count="127" type="stmt"/>
+        <line num="18" count="127" type="stmt"/>
+        <line num="19" count="127" type="stmt"/>
+        <line num="20" count="127" type="stmt"/>
+      </file>
+    </package>
+    <package name="firebase.friends">
+      <metrics statements="26" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="19" coveredmethods="0"/>
+      <file name="friends.api.js" path="C:/Users/kiano/graverate/src/firebase/friends/friends.api.js">
+        <metrics statements="15" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+      </file>
+      <file name="friends.service.js" path="C:/Users/kiano/graverate/src/firebase/friends/friends.service.js">
+        <metrics statements="11" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="firebase.groups">
+      <metrics statements="16" coveredstatements="9" conditionals="1" coveredconditionals="0" methods="9" coveredmethods="2"/>
+      <file name="groups.api.js" path="C:/Users/kiano/graverate/src/firebase/groups/groups.api.js">
+        <metrics statements="8" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="1"/>
+        <line num="18" count="127" type="stmt"/>
+        <line num="21" count="127" type="stmt"/>
+        <line num="24" count="127" type="stmt"/>
+        <line num="25" count="48" type="stmt"/>
+        <line num="32" count="127" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="37" count="127" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+      </file>
+      <file name="groups.service.js" path="C:/Users/kiano/graverate/src/firebase/groups/groups.service.js">
+        <metrics statements="8" coveredstatements="3" conditionals="1" coveredconditionals="0" methods="4" coveredmethods="1"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="32" count="48" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="37" count="127" type="stmt"/>
+        <line num="38" count="127" type="stmt"/>
+      </file>
+    </package>
+    <package name="firebase.notifications">
+      <metrics statements="12" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="10" coveredmethods="0"/>
+      <file name="notifications.api.js" path="C:/Users/kiano/graverate/src/firebase/notifications/notifications.api.js">
+        <metrics statements="8" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+      </file>
+      <file name="notifications.service.js" path="C:/Users/kiano/graverate/src/firebase/notifications/notifications.service.js">
+        <metrics statements="4" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="firebase.posts">
+      <metrics statements="14" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="8" coveredmethods="0"/>
+      <file name="posts.service.js" path="C:/Users/kiano/graverate/src/firebase/posts/posts.service.js">
+        <metrics statements="14" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="firebase.reports">
+      <metrics statements="2" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="reports.api.js" path="C:/Users/kiano/graverate/src/firebase/reports/reports.api.js">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+      <file name="reports.service.js" path="C:/Users/kiano/graverate/src/firebase/reports/reports.service.js">
+        <metrics statements="1" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="firebase.search">
+      <metrics statements="27" coveredstatements="9" conditionals="11" coveredconditionals="0" methods="20" coveredmethods="8"/>
+      <file name="search.api.js" path="C:/Users/kiano/graverate/src/firebase/search/search.api.js">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="6" count="5" type="stmt"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="18" count="5" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+      </file>
+      <file name="search.service.js" path="C:/Users/kiano/graverate/src/firebase/search/search.service.js">
+        <metrics statements="23" coveredstatements="5" conditionals="11" coveredconditionals="0" methods="16" coveredmethods="4"/>
+        <line num="8" count="127" type="cond" truecount="0" falsecount="2"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="42" count="5" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="76" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="17" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="8" coveredmethods="0"/>
+      <file name="searchUtils.js" path="C:/Users/kiano/graverate/src/utils/searchUtils.js">
+        <metrics statements="17" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="2" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
