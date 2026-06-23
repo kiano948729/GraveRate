@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, updateDoc, query, where, collection } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../firebase/config";
 import { useAuth } from "../../context/authContext";
+import  PostStemp  from "../posts/postStemp";
 
 function Profile() {
   const { currentUser } = useAuth();
@@ -19,6 +20,9 @@ function Profile() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [editPrivate, setEditPrivate] = useState(false);
+
+  const [posts, setPosts] = useState([]);
+
   const fileInputRef = useRef();
 
   useEffect(() => {
@@ -29,6 +33,20 @@ function Profile() {
         if (userSnap.exists()) {
           setUserData(userSnap.data());
         }
+
+        const postsQuery = query(
+          collection(db, "posts"),
+          where("userId", "==", currentUser.uid)
+        );
+
+        const postsSnap = await getDocs(postsQuery);
+
+        const postsData = postsSnap.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+    setPosts(postsData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -242,12 +260,7 @@ function Profile() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold mb-6">Posts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-zinc-900 rounded-2xl h-64 flex items-center justify-center text-zinc-500">
-              Nog geen posts
-            </div>
-          </div>
+          <PostStemp userId={currentUser.uid} />
         </div>
       </div>
     </div>

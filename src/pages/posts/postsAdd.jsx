@@ -1,5 +1,5 @@
 import '../../index.css';
-import '../../style/posts.css'
+
 import Login from "../../pages/Auth/Login";
 import hero from '../../assets/hero.png';
 import { createBrowserRouter, Link, Outlet, useNavigate, } from "react-router-dom";
@@ -82,6 +82,15 @@ export default function Postsadd() {
                     className="p-3 rounded bg-zinc-800"
                     required
                 />
+                                <input
+                    type="text"
+                    placeholder="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="p-3 rounded bg-zinc-800"
+                    required
+                />
+                <p>environment rating</p>
                 <select
                     value={environment}
                     onChange={(e) => setEnvironment(Number(e.target.value))}
@@ -92,35 +101,31 @@ export default function Postsadd() {
                     <option value={4}>4</option>
                     <option value={5}>5</option>
                 </select>
-                <input
-                    type="text"
-                    placeholder="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="p-3 rounded bg-zinc-800"
-                    required
-                />
+                <p>peace rating</p>
                 <input
                     type="number"
                     min="1"
                     max="5"
                     value={peace}
+                    placeholder='peace rating'
                     onChange={(e) => setPeace(Number(e.target.value))}
                 />
-
+                <p>architecture rating</p>
                 <input
                     type="number"
                     min="1"
                     max="5"
                     value={architecture}
+                    placeholder='architecture rating'
                     onChange={(e) => setArchitecture(Number(e.target.value))}
                 />
-
+                <p>uniqueness rating</p>
                 <input
                     type="number"
                     min="1"
                     max="5"
                     value={uniqueness}
+                    placeholder='uniqueness'
                     onChange={(e) => setUniqueness(Number(e.target.value))}
                 />
 

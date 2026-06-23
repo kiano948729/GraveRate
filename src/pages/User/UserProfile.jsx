@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useAuth } from "../../context/authContext";
 import {
@@ -11,6 +11,7 @@ import {
   getOutgoingRequests,
 } from "../../firebase/friends/friends.service";
 import { reportUser } from "../../firebase/reports/reports.service";
+import PostStemp from "../posts/PostStemp";
 
 const REPORT_REASONS = ["Spam", "Ongepaste inhoud", "Intimidatie", "Nep account", "Anders"];
 
@@ -18,6 +19,8 @@ export default function UserProfile() {
   const { uid } = useParams();
   const { currentUser } = useAuth();
 
+  const [posts, setPosts] = useState([]);
+  
   const [profile, setProfile] = useState(null);
   const [currentUserData, setCurrentUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,25 +34,38 @@ export default function UserProfile() {
   const [reportSent, setReportSent] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      setLoading(true);
+  async function load() {
+    setLoading(true);
 
-      const [profileSnap, currentSnap] = await Promise.all([
-        getDoc(doc(db, "users", uid)),
-        currentUser ? getDoc(doc(db, "users", currentUser.uid)) : null,
-      ]);
+    const [profileSnap, currentSnap] = await Promise.all([
+      getDoc(doc(db, "users", uid)),
+      currentUser ? getDoc(doc(db, "users", currentUser.uid)) : null,
+    ]);
 
-      if (profileSnap.exists()) setProfile(profileSnap.data());
-      if (currentSnap?.exists()) setCurrentUserData(currentSnap.data());
+    if (profileSnap.exists()) setProfile(profileSnap.data());
+    if (currentSnap?.exists()) setCurrentUserData(currentSnap.data());
 
-      // Check if there's already a pending request
-      if (currentUser) {
-        const outgoing = await getOutgoingRequests(currentUser.uid);
-        setRequestPending(outgoing.some((r) => r.to === uid));
-      }
+    const postsQuery = query(
+      collection(db, "posts"),
+      where("userId", "==", uid)
+    );
 
-      setLoading(false);
+    const postsSnap = await getDocs(postsQuery);
+
+    setPosts(
+      postsSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+    );
+
+    if (currentUser) {
+      const outgoing = await getOutgoingRequests(currentUser.uid);
+      setRequestPending(outgoing.some((r) => r.to === uid));
     }
+
+    setLoading(false);
+  }
 
     load();
   }, [uid, currentUser]);
@@ -98,6 +114,13 @@ export default function UserProfile() {
   }
 
   const avatarSrc = profile.profilePicture;
+// testing data
+  console.log("isBlocked:", isBlocked);
+  console.log("canSeePosts:", canSeePosts);
+  console.log("profile.private:", profile?.private);
+  console.log("isFriend:", isFriend);
+  console.log("isSelf:", isSelf);
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 text-white">
@@ -181,10 +204,7 @@ export default function UserProfile() {
       {/* POSTS PLACEHOLDER */}
       {!isBlocked && canSeePosts && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Posts</h2>
-          <div className="bg-zinc-900 rounded-2xl h-48 flex items-center justify-center text-zinc-500">
-            Nog geen posts
-          </div>
+        <PostStemp userId={uid} />
         </div>
       )}
 
