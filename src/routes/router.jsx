@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, } from "react-router-dom";
 
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home/Home";
@@ -13,7 +13,10 @@ import ProtectedRoute from "./ProtectedRoute";
 import Notifications from "../pages/Notifications/Notifications";
 import PostStemp from "../pages/posts/postStemp";
 import Posts from "../pages/posts/posts";
+import PostsAdd from "../pages/posts/postsAdd"
+import PostsEdit from "../pages/posts/postsEdit"
 import UserProfile from "../pages/User/UserProfile";
+import postsComments from "../pages/posts/postsComments"
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +31,9 @@ export const router = createBrowserRouter([
       { path: "register", element: <Register /> },
       { path: "postStemp", element: <PostStemp />},
       { path: "posts", element: <Posts /> },
+      { path: "postsAdd", element: <PostsAdd />},
       { path: "user/:uid", element: <UserProfile /> },
+      { path: "posts/edit/:postId", element: <PostsEdit />},
       {
         path: "profile",
         element: (
