@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  doc,
-  getDoc,
-  updateDoc
-} from "firebase/firestore";
-import { db } from "../../firebase/config";
+import '../../index.css';
+import { useEffect, useState, useRef } from "react";
+import { createBrowserRouter, Link, Outlet, useNavigate, useParams } from "react-router-dom";
+import { db, storage } from "../../firebase/config";
 import { useAuth } from "../../context/authContext";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, Timestamp, collection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { constant } from 'firebase/firestore/pipelines';
+import Login from "../../pages/Auth/Login";
+
 
 export default function PostsEdit() {
   const { currentUser } = useAuth();
@@ -23,17 +24,19 @@ export default function PostsEdit() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // 🔒 check login
+
   useEffect(() => {
     if (!currentUser) {
       navigate("/login");
     }
   }, [currentUser, navigate]);
 
-  // 📥 fetch bestaande post
   useEffect(() => {
     const fetchPost = async () => {
+        console.log("postId:", postId);
+        console.log("currentUser:", currentUser);
       try {
+
         const ref = doc(db, "posts", postId);
         const snap = await getDoc(ref);
 
@@ -43,15 +46,22 @@ export default function PostsEdit() {
         }
 
         const data = snap.data();
-
+        console.log("POST DATA:", data);
         // 🔒 ownership check
         if (data.userId !== currentUser.uid) {
           navigate("/");
           return;
         }
+        // check of ratings bestaat, anders wordt het 1. 
+        const ratings = data.ratings ?? {
+        environment: 1,
+        peace: 1,
+        architecture: 1,
+        uniqueness: 1,
+        };
 
-        setcemeteryId(data.cemeteryId);
-        setDescription(data.description);
+        setcemeteryId(data.cemeteryId ?? "");
+        setDescription(data.description?? "");
         setEnvironment(data.ratings.environment);
         setPeace(data.ratings.peace);
         setArchitecture(data.ratings.architecture);
@@ -67,7 +77,6 @@ export default function PostsEdit() {
     if (currentUser) fetchPost();
   }, [postId, currentUser]);
 
-  // 💾 update post
   const updatePost = async (e) => {
     e.preventDefault();
 
@@ -85,7 +94,7 @@ export default function PostsEdit() {
         },
       });
 
-      navigate("/posts");
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }

@@ -14,7 +14,7 @@ import { db, auth } from "../../firebase/config";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 
-export default function PostStemp({ userId = null, showEdit = false }) {
+export default function PostStemp({ userId = null}) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
@@ -102,9 +102,7 @@ export default function PostStemp({ userId = null, showEdit = false }) {
       {posts.map((post) => {
         const hasLiked = post.likes?.includes(auth.currentUser?.uid);
 
-        const canEdit =
-          showEdit && currentUser?.uid === post.userId;
-
+        const canEdit = currentUser?.uid === post.userId;
         return (
           <div key={post.id} className="bg-zinc-900 p-4 rounded-lg mb-4">
             <h2 className="font-bold">
@@ -148,11 +146,11 @@ export default function PostStemp({ userId = null, showEdit = false }) {
               <button>comments</button>
               <button>flag post</button>
             </div>
-
+                
             {/* edit voor eigen posts. */}
             {canEdit && (
               <Link
-                to={`/posts/edit/${post.id}`}
+                 to={`/posts/edit/${post.id}`}
                 className="text-sm text-blue-400 mt-2 inline-block"
               >
                 Bewerken

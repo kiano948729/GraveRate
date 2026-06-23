@@ -33,10 +33,7 @@ export default function BottomNav() {
         <IconSearch />
         Zoeken
       </Link>
-      <Link to="/postStemp" className={p.startsWith("/postStemp") ? "active" : ""}>
-        <IconSearch />
-        tempposts
-      </Link>
+      
       <Link to="/postsAdd" className={p.startsWith("/postsAdd") ? "active" : ""}>
         <IconSearch />
         nieuwe post maken
