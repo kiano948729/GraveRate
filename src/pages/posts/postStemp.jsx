@@ -8,7 +8,9 @@ import {
   arrayRemove,
   query,
   where,
-  orderBy
+  orderBy,
+  getDoc,
+  increment
 } from "firebase/firestore";
 import { db, auth } from "../../firebase/config";
 import { Link } from "react-router-dom";
@@ -18,6 +20,7 @@ export default function PostStemp({ userId = null}) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,7 +52,7 @@ export default function PostStemp({ userId = null}) {
 
     fetchPosts();
   }, [userId]);
-
+  // de "normale" likes 
   const handleLike = async (postId) => {
     const user = auth.currentUser;
 
@@ -93,74 +96,161 @@ export default function PostStemp({ userId = null}) {
     }
   };
 
+  // grafrovertje spelen 
+  const handleGraveRobbery = async (post) => {
+    if (!currentUser) return;
+    if (post.userId === currentUser.uid) {
+    alert("Je kunt geen likes van je eigen post stelen.");
+    return;
+}
+
+    if (!currentUser) return;
+
+    const userRef = doc(db, "users", currentUser.uid);
+    const userSnap = await getDoc(userRef);
+
+
+    if (!userSnap.exists()) return;
+    const userData = userSnap.data();
+    const robbedPosts = userData.robbedPosts || [];
+    const likes = post.likes?.length || 0;
+
+    if (robbedPosts.includes(post.id)) {
+    alert("Je hebt deze post al geplunderd.");
+    return;
+    }
+
+    await updateDoc(userRef, {
+    graveRobberyPoints: increment(likes),
+    robbedPosts: arrayUnion(post.id)
+    });
+    
+
+    alert(`${likes} Grave Robbery Points verdiend!`);
+  };
+
+
   if (loading) return <p>Posts laden...</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Posts</h1>
+  <div
+    style={{
+      maxWidth: 720,
+      margin: "0 auto",
+      padding: "24px 16px",
+    }}
+  >
+    {!userId && (
+      <h1
+        className="font-display"
+        style={{
+          fontSize: 24,
+          marginBottom: 20,
+        }}
+      >
+        Recente posts
+      </h1>
+    )}
 
-      {posts.map((post) => {
-        const hasLiked = post.likes?.includes(auth.currentUser?.uid);
+    {posts.map((post) => {
+      const hasLiked = post.likes?.includes(auth.currentUser?.uid);
+      const canEdit = currentUser?.uid === post.userId;
 
-        const canEdit = currentUser?.uid === post.userId;
-        return (
-          <div key={post.id} className="bg-zinc-900 p-4 rounded-lg mb-4">
-            <h2 className="font-bold">
-              <p>naam begraafplaats:</p>
-              <p>{post.cemeteryId}</p>
-            </h2>
+      return (
+        <div
+          key={post.id}
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+          }}
+        >
+          <h2 className="font-bold">
+            <p>Naam begraafplaats:</p>
+            <p>{post.cemeteryId}</p>
+          </h2>
 
-            <p>beschrijving:</p>
-            <p>{post.description}</p>
+          <p>Beschrijving:</p>
+          <p>{post.description}</p>
 
-            <div className="mt-2">
-              <p>Omgeving: {post.ratings.environment}/5</p>
-              <p>Rust: {post.ratings.peace}/5</p>
-              <p>Architectuur: {post.ratings.architecture}/5</p>
-              <p>Uniekheid: {post.ratings.uniqueness}/5</p>
-            </div>
-
-            <div className="posts-AverageRating">
-              <button>
-                Gemiddelde:{" "}
-                {(
-                  (post.ratings?.environment ?? 0) +
-                  (post.ratings?.peace ?? 0) +
-                  (post.ratings?.architecture ?? 0) +
-                  (post.ratings?.uniqueness ?? 0)
-                ) / 4
-                .toFixed(2)}/5
-              </button>
-            </div>
-
-            <p className="text-sm text-gray-400 mt-2">
-              Likes: {post.likes?.length || 0}
-            </p>
-
-            <div className="posts-Ratings">
-              <button onClick={() => handleLike(post.id)}>
-                {hasLiked ? "like verwijderen" : "Like geven"}
-              </button>
-
-              <button>likes stelen</button>
-              <button>comments</button>
-              <button>flag post</button>
-            </div>
-                
-            {/* edit voor eigen posts. */}
-            {canEdit && (
-              <Link
-                 to={`/posts/edit/${post.id}`}
-                className="text-sm text-blue-400 mt-2 inline-block"
-              >
-                Bewerken
-              </Link>
-            )}
-
-            <div className="posts-Divider"></div>
+          <div
+            style={{
+              marginTop: 12,
+              marginBottom: 12,
+            }}
+          >
+            <p>Omgeving: {post.ratings.environment}/5</p>
+            <p>Rust: {post.ratings.peace}/5</p>
+            <p>Architectuur: {post.ratings.architecture}/5</p>
+            <p>Uniekheid: {post.ratings.uniqueness}/5</p>
           </div>
-        );
-      })}
-    </div>
-  );
+
+          <div style={{ marginBottom: 12 }}>
+            <button className="btn-ghost">
+              Gemiddelde:{" "}
+              {(
+                (post.ratings?.environment ?? 0) +
+                (post.ratings?.peace ?? 0) +
+                (post.ratings?.architecture ?? 0) +
+                (post.ratings?.uniqueness ?? 0)
+              ) / 4}
+              /5
+            </button>
+          </div>
+
+          <p
+            style={{
+              color: "var(--muted)",
+              fontSize: 13,
+              marginBottom: 12,
+            }}
+          >
+            Likes: {post.likes?.length || 0}
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              marginBottom: canEdit ? 12 : 0,
+            }}
+          >
+            <button
+              className="btn-primary"
+              onClick={() => handleLike(post.id)}
+            >
+              {hasLiked ? "Like verwijderen" : "Like geven"}
+            </button>
+
+            <button
+              className="btn-ghost"
+              onClick={() => handleGraveRobbery(post)}
+            >
+              Likes stelen
+            </button>
+
+            <button className="btn-ghost">Comments</button>
+
+            <button className="btn-ghost">Flag post</button>
+          </div>
+
+          {canEdit && (
+            <Link
+              to={`/posts/edit/${post.id}`}
+              className="text-sm"
+              style={{
+                color: "var(--accent)",
+              }}
+            >
+              Bewerken
+            </Link>
+          )}
+        </div>
+      );
+    })}
+  </div>
+);
 }

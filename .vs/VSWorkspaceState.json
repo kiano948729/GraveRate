@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src"
+    "\\src",
+    "\\src\\pages",
+    "\\src\\routes"
   ],
   "PreviewInSolutionExplorer": false
 }
