@@ -16,7 +16,7 @@ import Posts from "../pages/posts/posts";
 import PostsAdd from "../pages/posts/postsAdd"
 import PostsEdit from "../pages/posts/postsEdit"
 import UserProfile from "../pages/User/UserProfile";
-import postsComments from "../pages/posts/postsComments"
+import PostsComments from "../pages/posts/postsComments"
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +34,7 @@ export const router = createBrowserRouter([
       { path: "postsAdd", element: <PostsAdd />},
       { path: "user/:uid", element: <UserProfile /> },
       { path: "posts/edit/:postId", element: <PostsEdit />},
+      { path: "posts/:postId/comments", element: <PostsComments /> },
       {
         path: "profile",
         element: (

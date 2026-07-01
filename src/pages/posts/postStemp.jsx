@@ -22,6 +22,7 @@ export default function PostStemp({ userId = null}) {
   const { currentUser } = useAuth();
 
 
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -231,8 +232,12 @@ export default function PostStemp({ userId = null}) {
             >
               Likes stelen
             </button>
-
-            <button className="btn-ghost">Comments</button>
+            <Link
+              to={`/posts/${post.id}/comments`}
+              className="btn-ghost"
+            >
+              Comments
+            </Link>
 
             <button className="btn-ghost">Flag post</button>
           </div>
@@ -240,10 +245,7 @@ export default function PostStemp({ userId = null}) {
           {canEdit && (
             <Link
               to={`/posts/edit/${post.id}`}
-              className="text-sm"
-              style={{
-                color: "var(--accent)",
-              }}
+              className="btn-ghost"
             >
               Bewerken
             </Link>
