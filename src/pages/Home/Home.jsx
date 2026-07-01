@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
+import PostStemp from "../posts/postStemp";
 
 export default function Home() {
   const { currentUser } = useAuth();
@@ -55,7 +56,9 @@ export default function Home() {
         )}
       </div>
 
-      {/* Feed - posts komen hier zodra de posts feature gebouwd is */}
+      <div style={{ padding: "24px 16px" }}>
+      <PostStemp />
+      </div>
     </div>
   );
 }
